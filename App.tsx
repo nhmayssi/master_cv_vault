@@ -6,6 +6,7 @@ import { generateReflectiveParagraph, generateEducationInsight } from './service
 type Tab = 'experiences' | 'education';
 
 const App: React.FC = () => {
+  const [isVaultUnlocked, setIsVaultUnlocked] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('experiences');
   const [entries, setEntries] = useState<CVEntry[]>([]);
   const [eduEntries, setEduEntries] = useState<EducationEntry[]>([]);
@@ -63,6 +64,46 @@ const App: React.FC = () => {
     setEduLoadingId(null);
   };
 
+  // --- Landing Screen UI ---
+  if (!isVaultUnlocked) {
+    return (
+      <div className="min-h-screen bg-[#030712] flex items-center justify-center p-6">
+        <div className="max-w-md w-full text-center space-y-10 animate-in fade-in zoom-in duration-1000">
+          <div className="relative inline-block">
+            <div className="absolute -inset-4 bg-cyan-500/20 blur-2xl rounded-full"></div>
+            <div className="relative bg-gray-900 border border-gray-800 p-6 rounded-3xl shadow-2xl">
+              <svg className="w-12 h-12 text-cyan-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <h1 className="text-4xl font-extrabold text-white tracking-tight">Master CV Vault</h1>
+            <p className="text-gray-400 leading-relaxed">
+              Your academic assets and super-curricular research, protected and refined by admissions-grade AI.
+            </p>
+          </div>
+
+          <button 
+            onClick={() => setIsVaultUnlocked(true)}
+            className="group relative w-full inline-flex items-center justify-center gap-3 bg-white text-gray-950 px-8 py-5 rounded-2xl font-bold text-lg transition-all hover:bg-cyan-50 hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-cyan-900/10"
+          >
+            Access Research Vault
+            <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+          
+          <p className="text-[10px] text-gray-600 uppercase tracking-[0.2em] font-bold">
+            Authorized Personnel Only • Secure Session Enabled
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // --- Main Vault UI ---
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col md:flex-row text-gray-200 font-sans selection:bg-cyan-500/30">
       
@@ -95,8 +136,10 @@ const App: React.FC = () => {
         </section>
 
         <div className="pt-6 border-t border-gray-800/60 space-y-3">
-          <button className="w-full flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 py-3 rounded-xl transition-all text-sm font-semibold border border-gray-700/50">
-            Backup Data
+          <button 
+            onClick={() => setIsVaultUnlocked(false)}
+            className="w-full flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 py-3 rounded-xl transition-all text-sm font-semibold border border-gray-700/50">
+            Lock Vault
           </button>
         </div>
       </aside>
@@ -119,7 +162,7 @@ const App: React.FC = () => {
         </div>
 
         {activeTab === 'experiences' ? (
-          <div className="max-w-4xl mx-auto space-y-12">
+          <div className="max-w-4xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <section className="bg-gray-900/40 border border-gray-800/60 rounded-3xl overflow-hidden shadow-2xl">
               <form onSubmit={handleExpSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2 md:col-span-2">
@@ -168,7 +211,7 @@ const App: React.FC = () => {
                     <div><h5 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Learning</h5><p className="text-gray-300 text-sm leading-relaxed">{e.learning}</p></div>
                   </div>
                   {e.reflection && (
-                    <div className="mt-8 p-6 bg-indigo-900/10 border border-indigo-500/10 rounded-2xl">
+                    <div className="mt-8 p-6 bg-indigo-900/10 border border-indigo-500/10 rounded-2xl animate-in slide-in-from-top-2">
                       <p className="text-gray-200 italic font-serif opacity-90 leading-relaxed text-lg">"{e.reflection}"</p>
                     </div>
                   )}
@@ -177,7 +220,7 @@ const App: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="max-w-4xl mx-auto space-y-12">
+          <div className="max-w-4xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <section className="bg-gray-900/40 border border-gray-800/60 rounded-3xl overflow-hidden shadow-2xl">
               <div className="bg-purple-500/10 px-8 py-4 border-b border-gray-800/60">
                 <h3 className="text-sm font-bold text-purple-400 uppercase tracking-widest">Enrollment Log</h3>
@@ -234,7 +277,7 @@ const App: React.FC = () => {
                       </div>
                     )}
                     {e.reflection && (
-                      <div className="p-6 bg-purple-900/10 border border-purple-500/10 rounded-2xl">
+                      <div className="p-6 bg-purple-900/10 border border-purple-500/10 rounded-2xl animate-in slide-in-from-top-2">
                         <p className="text-gray-100 italic font-serif opacity-90 leading-relaxed text-lg">"{e.reflection}"</p>
                       </div>
                     )}
