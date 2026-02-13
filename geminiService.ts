@@ -2,25 +2,41 @@ import { GoogleGenAI } from "@google/genai";
 import { CVEntry, EducationEntry } from "../types";
 
 export async function generateReflectiveParagraph(entry: CVEntry): Promise<string> {
-  if (!process.env.API_KEY) return "AI Key missing. Reflecting manually: I developed strong problem-solving skills.";
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) return "AI reflection unavailable: API key not detected in environment.";
+  
+  const ai = new GoogleGenAI({ apiKey });
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `University admissions consultant. Reflect on this in 2 sentences: Title: ${entry.title}, Challenge: ${entry.challenge}, Learning: ${entry.learning}.`,
+      contents: `You are a high-end University Admissions Consultant. Create a sophisticated 2-sentence reflection for a personal statement based on this experience: 
+      Title: ${entry.title}
+      Challenge faced: ${entry.challenge}
+      Learning outcomes: ${entry.learning}`,
     });
-    return response.text.trim();
-  } catch { return "Reflection failed."; }
+    return response.text || "Reflection generated but empty.";
+  } catch (error) {
+    console.error("Gemini Error:", error);
+    return "The AI vault is currently busy. Please try reflecting again in a moment.";
+  }
 }
 
 export async function generateEducationInsight(entry: EducationEntry): Promise<string> {
-  if (!process.env.API_KEY) return "AI Key missing. My subjects provided a strong academic foundation.";
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) return "Academic insight unavailable without API key.";
+
+  const ai = new GoogleGenAI({ apiKey });
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Admissions consultant. Create a 1-sentence insight for personal statement: School: ${entry.school}, Qualification: ${entry.qualification}, Subjects: ${entry.subjects}.`,
+      contents: `As an admissions expert, write a 1-sentence punchy academic insight for a personal statement about this student's background:
+      Institution: ${entry.school}
+      Qualification: ${entry.qualification}
+      Subjects: ${entry.subjects}`,
     });
-    return response.text.trim();
-  } catch { return "Insight failed."; }
+    return response.text || "Insight generated but empty.";
+  } catch (error) {
+    console.error("Gemini Error:", error);
+    return "Could not analyze academic profile at this time.";
+  }
 }
